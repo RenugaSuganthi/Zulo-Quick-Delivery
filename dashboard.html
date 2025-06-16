@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Store Owner Dashboard</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5; /* Light gray background for the whole page */
+}
+
+    .b {
+      position: relative; /* Add this to establish positioning context */
+  background: url('https://videos.openai.com/vg-assets/assets%2Ftask_01jwc54s6nfspagerx3wqcazvn%2F1748459828_img_3.webp?st=2025-05-28T18%3A14%3A42Z&se=2025-06-03T19%3A14%3A42Z&sks=b&skt=2025-05-28T18%3A14%3A42Z&ske=2025-06-03T19%3A14%3A42Z&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skoid=aa5ddad1-c91a-4f0a-9aca-e20682cc8969&skv=2019-02-02&sv=2018-11-09&sr=b&sp=r&spr=https%2Chttp&sig=ZtzWq1qatLYI62GZXa%2BiCA4ETtqIlCB6M1lKc0Qh0SU%3D&az=oaivgprodscus');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 120vh;
+  max-width: 100%;
+  padding: 20px;
+
+    }
+
+    .b::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+  z-index: 0; /* Ensure it stays behind the content */
+}
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #d32f2f;
+      padding: 10px 20px;
+      color: white;
+    }
+
+    .navbar a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-right button {
+      background: white;
+      color: #d32f2f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-right button:hover {
+      background: #f44336;
+      color: white;
+    }
+     
+    .form-container {
+  position: relative; /* Add this */
+  background: white;
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+  z-index: 1; /* Ensure it stays above the overlay */
+}
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+    .my-products-container {
+  background: rgb(236, 230, 230);
+  max-width: 1200px; /* Wider container for better product arrangement */
+  margin: 20px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+   
+#productList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 25px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+   .product-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.remove-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 6px 12px;
+  background: #d32f2f;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.remove-btn:hover {
+  background: #b71c1c;
+  text-decoration: none;
+}
+ .out-of-stock-overlay {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  border-radius: 5px;
+}
+.product-item div {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.product-item div:first-of-type {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+    a {
+      color: #d32f2f;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-left, .nav-right {
+        margin-bottom: 10px;
+      }
+    }
+
+    #userDisplay {
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    /* Role switch popup */
+    #roleSwitchContainer {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #roleSwitchContainer > div {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+      <img src="zylo1.png" alt="Logo">
+      <a href="index.html">🏠 Home</a>
+      <a href="track.html">📦 Track</a>
+    </div>
+    <div class="nav-right">
+      <div id="storeName" style="font-weight: bold;"></div>
+      <span id="userDisplay"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="b">
+    <div id="storeNameInputSection" class="form-container" style="display: none; max-width: 300px;">
+      <h3>🏪 Enter Your Store Name</h3>
+      <input type="text" id="storeNameInput" placeholder="Your Store Name" />
+      <button onclick="saveStoreName()">Save Store Name</button>
+    </div>
+
+    <div class="form-container" id="addProductSection">
+      <h2>🛒 Add New Product</h2>
+      <select id="category" onchange="toggleExpiryField()">
+        <option value="Stationery">Stationery</option>
+        <option value="Food">Food</option>
+      </select>
+      <input type="text" id="productName" placeholder="Product Name" />
+      <input type="number" id="price" placeholder="Price (₹)" />
+      <input type="number" id="quantity" placeholder="Quantity" />
+      <input type="date" id="expiry" placeholder="Expiry Date" />
+      <input type="number" id="discount" placeholder="Discount (%)" min="0" max="100" />
+      <label><strong>Upload Product Image:</strong></label>
+      <button type="button" onclick="document.getElementById('productImage').click()">Choose Image</button>
+      <input type="file" accept="image/*" id="productImage" style="display:none" />
+      <label><strong>OR Enter Image URL:</strong></label>
+      <input type="text" id="productImageUrl" placeholder="Paste image URL here" />
+      <button onclick="addProduct()">Add Product</button>
+      <p><a href="#" onclick="switchToCustomerView()">Go to Customer View</a></p>
+    </div>
+  </div>
+
+  <div class="my-products-container" style="display:none">
+    <h3>📦 My Products</h3>
+    <ul id="productList"></ul>
+  </div>
+
+  <!-- Role Switch Confirmation Popup -->
+  <div id="roleSwitchContainer">
+    <div>
+      <p id="roleSwitchMessage" style="font-size: 18px; margin-bottom: 20px;">Are you sure you want to switch roles?</p>
+      <button id="confirmSwitchBtn" style="margin-right: 10px; padding: 10px 20px; background: #d32f2f; color: white; border: none; border-radius: 5px; cursor: pointer;">Yes</button>
+      <button id="cancelSwitchBtn" style="padding: 10px 20px; background: #ccc; color: #333; border: none; border-radius: 5px; cursor: pointer;">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const storeNameEl = document.getElementById('storeName');
+    const userDisplay = document.getElementById('userDisplay');
+    const storeNameInputSection = document.getElementById('storeNameInputSection');
+    const addProductSection = document.getElementById('addProductSection');
+    const expiryInput = document.getElementById('expiry');
+    const categorySelect = document.getElementById('category');
+    const productImageInput = document.getElementById('productImage');
+    const productImageUrlInput = document.getElementById('productImageUrl');
+    const placeholderImage = "https://via.placeholder.com/200";
+
+    if (!user || user.role !== 'store') {
+      alert('Unauthorized. Please log in as store owner.');
+      window.location.href = 'login.html';
+    } else {
+      userDisplay.textContent = `👤 ${user.role === 'store' ? 'Owner' : 'Customer'}`;
+      if (!user.name || user.name.trim() === '') {
+        storeNameInputSection.style.display = 'block';
+        addProductSection.style.display = 'none';
+      } else {
+        storeNameEl.textContent = `🏪 ${user.name}`;
+      }
+    }
+
+    function toggleExpiryField() {
+      if (categorySelect.value === 'Stationery') {
+        expiryInput.disabled = true;
+        expiryInput.value = '';
+      } else {
+        expiryInput.disabled = false;
+      }
+    }
+    
+    toggleExpiryField();
+
+    function saveStoreName() {
+      const newName = document.getElementById('storeNameInput').value.trim();
+      if (newName) {
+        user.name = newName;
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        storeNameEl.textContent = `🏪 ${newName}`;
+        storeNameInputSection.style.display = 'none';
+        addProductSection.style.display = 'block';
+        alert('Store name saved.');
+        displayStoreProducts();
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out!');
+      window.location.href = 'login.html';
+    }
+
+    function switchToCustomerView() {
+      user.role = 'customer';
+      localStorage.setItem('loggedInUser', JSON.stringify(user));
+      window.location.href = 'main.html';
+    }
+
+     async function addProduct() {
+      const name = document.getElementById('productName').value.trim();
+      const price = +document.getElementById('price').value;
+      const quantity = +document.getElementById('quantity').value;
+      const expiry = expiryInput.value;
+      const discount = +document.getElementById('discount').value || 0;
+      const category = categorySelect.value;
+
+      if (!name || price <= 0 || quantity < 0 || discount < 0 || discount > 100) {
+        alert('Please enter valid fields.');
+        return;
+      }
+      if (category === 'Food' && (!expiry || new Date(expiry) < new Date())) {
+        alert('Valid expiry date required for food.');
+        return;
+      }
+
+      let imageData = placeholderImage;
+      if (productImageInput.files && productImageInput.files[0]) {
+        imageData = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = e => resolve(e.target.result);
+          reader.readAsDataURL(productImageInput.files[0]);
+        });
+      } else if (productImageUrlInput.value.trim()) {
+        imageData = productImageUrlInput.value.trim();
+      }
+
+      const newProduct = {
+        id: Date.now(),
+        name, price, quantity, expiry, discount, category,
+        storeEmail: user.email, storeName: user.name, image: imageData
+      };
+
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      products.push(newProduct);
+      localStorage.setItem('products', JSON.stringify(products));
+
+      alert('Product Added!');
+      clearForm();
+      displayStoreProducts();
+    }
+    
+
+    function clearForm() {
+      document.getElementById('productName').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('quantity').value = '';
+      expiryInput.value = '';
+      document.getElementById('discount').value = '';
+      categorySelect.value = 'Stationery';
+      toggleExpiryField();
+      productImageInput.value = '';
+      productImageUrlInput.value = '';
+    }
+
+    function displayStoreProducts() {
+      const list = document.getElementById('productList');
+      const container = document.querySelector('.my-products-container');
+      const products = JSON.parse(localStorage.getItem('products') || '[]');
+      const mine = products.filter(p => p.storeEmail === user.email);
+      list.innerHTML = '';
+
+      if (mine.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+      container.style.display = 'block';
+
+      mine.forEach(p => {
+        const item = document.createElement('li');
+        item.className = 'product-item';
+        item.innerHTML = `
+          <div style="position:relative;">
+            <img src="${p.image}" class="product-image" alt="${p.name}" />
+            ${p.quantity === 0 ? `<div class="out-of-stock-overlay">Out of Stock</div>` : ""}
+          </div>
+          <div><strong><center>${p.name}</center></strong></div>
+          <div>Price: ₹${p.price}</div>
+          <div>Quantity: ${p.quantity}</div>
+          <div>Discount: ${p.discount}%</div>
+          <div>Category: ${p.category}</div>
+          <div style="font-size: 15px;">Expires: ${p.expiry || 'N/A'}</div>
+          <span class="remove-btn" onclick="removeProduct(${p.id})">❌ Remove</span>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function removeProduct(id) {
+      let products = JSON.parse(localStorage.getItem('products') || '[]');
+      products = products.filter(p => p.id !== id);
+      localStorage.setItem('products', JSON.stringify(products));
+      displayStoreProducts();
+    }
+
+    window.onload = displayStoreProducts;
+
+    const roleSwitchContainer = document.getElementById('roleSwitchContainer');
+    const roleSwitchMessage = document.getElementById('roleSwitchMessage');
+    const confirmSwitchBtn = document.getElementById('confirmSwitchBtn');
+    const cancelSwitchBtn = document.getElementById('cancelSwitchBtn');
+
+    document.getElementById('userDisplay').addEventListener('click', () => {
+      const targetRole = user.role === 'store' ? 'customer' : 'store owner';
+      roleSwitchMessage.textContent = `Are you sure you want to switch to ${targetRole} role?`;
+      roleSwitchContainer.style.display = 'flex';
+    });
+
+    confirmSwitchBtn.addEventListener('click', () => {
+      user.role = user.role === 'store' ? 'customer' : 'store';
+      localStorage.setItem('loggedInUser', JSON.stringify(user));
+      roleSwitchContainer.style.display = 'none';
+      window.location.href = user.role === 'store' ? 'dashboard.html' : 'main.html';
+    });
+
+    cancelSwitchBtn.addEventListener('click', () => {
+      roleSwitchContainer.style.display = 'none';
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login - One-Day Delivery</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('dairyandstationery.png') no-repeat center center / cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .overlay {
+  background: rgba(0, 0, 0, 0.76);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+    .form-container {
+      width: 350px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+      height: 480px;
+    }
+
+    .overlay img.logo {
+      height: 150px;
+      margin-bottom: 5px;
+      margin-top: -10px;
+    }
+
+    h2 {
+      color: #d32f2f;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-container input {
+      padding-right: 40px;
+    }
+
+    .password-container .toggle-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 24px;
+      height: 20px;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .remember-me input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    a {
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      margin-top: 10px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .error-message.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <img src="zylo2.png" class="logo" alt="Zylo Logo">
+    <div class="form-container">
+      
+      <h2>Login</h2>
+
+      <input type="email" id="loginEmail" placeholder="Email" required>
+
+      <div class="password-container">
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <img src="eo.jpg" class="toggle-eye" alt="Toggle Password" onclick="togglePassword()">
+      </div>
+
+      <select id="userRole">
+        <option value="customer">Customer</option>
+        <option value="store">Store Owner</option>
+      </select>
+
+      <div class="remember-me">
+        <input type="checkbox" id="rememberMe">
+        <label for="rememberMe">Remember me</label>
+      </div>
+
+      <button onclick="login()">Login</button>
+      <p><a href="#" onclick="forgotPassword()">Forgot Password?</a></p>
+      <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+      <div id="errorMessage" class="error-message">Invalid email or password.</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAqAuu8Hml8N4Jo76QO1t0nreAbGQzkV6k",
+      authDomain: "fitness-tracker-dashboard.firebaseapp.com",
+      projectId: "fitness-tracker-dashboard",
+      storageBucket: "fitness-tracker-dashboard.appspot.com",
+      messagingSenderId: "528880502919",
+      appId: "1:528880502919:web:7a8fc98b649b15ae0c5022",
+      measurementId: "G-CNPPXPGZ78"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.onload = function () {
+      const savedEmail = localStorage.getItem('rememberedEmail');
+      if (savedEmail) {
+        document.getElementById('loginEmail').value = savedEmail;
+        document.getElementById('rememberMe').checked = true;
+      }
+    };
+
+    window.togglePassword = function () {
+      const passwordInput = document.getElementById('loginPassword');
+      const eyeImg = document.querySelector('.toggle-eye');
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeImg.src = 'ec.jpg';
+      } else {
+        passwordInput.type = 'password';
+        eyeImg.src = 'eo.jpg';
+      }
+    };
+
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.classList.add('show');
+      setTimeout(() => {
+        errorDiv.classList.remove('show');
+      }, 5000);
+    }
+
+    window.login = async function () {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const role = document.getElementById('userRole').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      if (!email || !password) {
+        showError("Please enter both email and password.");
+        return;
+      }
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (rememberMe) {
+          localStorage.setItem('rememberedEmail', email);
+        } else {
+          localStorage.removeItem('rememberedEmail');
+        }
+
+        localStorage.setItem('loggedInUser', JSON.stringify({
+          uid: user.uid,
+          email: user.email,
+          role: role
+        }));
+
+        alert(`Welcome ${user.email}! Redirecting...`);
+        if (role === 'customer') {
+          window.location.href = 'main.html';
+        } else if (role === 'store') {
+          window.location.href = 'dashboard.html';
+        }
+      } catch (error) {
+        showError("Invalid email or password.");
+        console.error(error);
+      }
+    };
+
+    window.forgotPassword = async function () {
+      const email = document.getElementById('loginEmail').value.trim();
+      if (!email) {
+        showError("Please enter your email first.");
+        return;
+      }
+
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert("Password reset email sent! Check your inbox.");
+      } catch (error) {
+        showError("Failed to send reset email. Please check your email.");
+        console.error(error);
+      }
+    };
+  </script>
+</body>
+</html>

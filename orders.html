@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Orders - Store Owner</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <nav class="navbar">
+  <div class="nav-left">
+    <a href="index.html">🏠 Home</a>
+    <a href="cart.html">🛒 Cart</a>
+    <a href="track.html">📦 Track Order</a>
+  </div>
+  <div class="nav-right">
+    <span id="userDisplay"></span>
+    <button onclick="logout()">Logout</button>
+  </div>
+</nav>
+  <div class="form-container">
+    <h2>📋 Store Owner: Manage Orders</h2>
+    <ul id="orderList"></ul>
+    <a href="dashboard.html">← Back to Dashboard</a>
+  </div>
+
+  <script>
+
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    if (!user || user.role !== 'store') {
+      alert('Access denied. Login as a store owner.');
+      window.location.href = 'login.html';
+    }
+
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orderList = document.getElementById('orderList');
+
+    const myOrders = orders.filter(order =>
+      order.items.some(item => item.storeEmail === user.email)
+    );
+
+    if (myOrders.length === 0) {
+      orderList.innerHTML = "<li>No orders for your store yet.</li>";
+    } else {
+      myOrders.forEach(order => {
+        const items = order.items.filter(i => i.storeEmail === user.email);
+        const itemList = items.map(i => `<li>${i.name} - ₹${i.price}</li>`).join("");
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <h4>🆔 ${order.orderId}</h4>
+          <p><strong>Address:</strong> ${order.address}</p>
+          <p><strong>Current Status:</strong> ${order.status}</p>
+          <ul>${itemList}</ul>
+          <select id="status-${order.orderId}">
+            <option value="Order Placed">Order Placed</option>
+            <option value="Packed">Packed</option>
+            <option value="Out for Delivery">Out for Delivery</option>
+            <option value="Delivered">Delivered</option>
+          </select>
+          <button onclick="updateStatus('${order.orderId}')">Update Status</button>
+          <hr>
+        `;
+        orderList.appendChild(li);
+      });
+    }
+
+    function updateStatus(orderId) {
+      const newStatus = document.getElementById(`status-${orderId}`).value;
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+
+      const index = orders.findIndex(o => o.orderId === orderId);
+      if (index !== -1) {
+        orders[index].status = newStatus;
+        localStorage.setItem('orders', JSON.stringify(orders));
+        alert(`Status updated to "${newStatus}"`);
+        location.reload(); // refresh to show updated status
+      }
+    }
+   
+  const userDisplay = document.getElementById('userDisplay');
+
+  if (user) {
+    userDisplay.textContent = `👤 ${user.role === 'store' ? 'Store Owner' : 'Customer'}: ${user.name}`;
+  } else {
+    window.location.href = 'login.html';
+  }
+
+  function logout() {
+    localStorage.removeItem('loggedInUser');
+    alert('Logged out successfully!');
+    window.location.href = 'login.html';
+  }
+  </script>
+</body>
+</html>

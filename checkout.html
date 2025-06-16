@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zulo | Checkout</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    .b {
+      background: linear-gradient(to bottom right, #fbe9e7, #fce4ec);
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #d32f2f;
+      padding: 10px 20px;
+      color: white;
+    }
+
+    .navbar a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-right button {
+      background: white;
+      color: #d32f2f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-right button:hover {
+      background: #f44336;
+      color: white;
+    }
+
+    .form-container {
+      background: white;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .product-details {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .product-details img {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .product-info {
+      width: 100%;
+      text-align: left;
+      padding: 0 20px;
+    }
+
+    .product-name {
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .product-price {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .discounted-price {
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .discount-badge {
+      background: #388e3c;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .product-quantity {
+      color: #666;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .summary-label {
+      font-weight: bold;
+    }
+
+    .summary-value {
+      font-weight: bold;
+    }
+
+    .grand-total {
+      font-size: 1.2em;
+      color: #d32f2f;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    #addressDisplay {
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    #address {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    #changeAddressBtn {
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ccc;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 5px;
+      display: none;
+    }
+
+    #changeAddressBtn:hover {
+      background: #e0e0e0;
+    }
+
+    #placeOrderBtn {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    #placeOrderBtn:hover {
+      background: #388e3c;
+    }
+
+    #orderStatus {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success-message {
+      text-align: center;
+      font-size: 18px;
+      color: #4caf50;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .back-to-home {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .back-to-home a {
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 15px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .back-to-home a:hover {
+      background-color: #f5f5f5;
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-left, .nav-right {
+        margin-bottom: 10px;
+      }
+      .product-details img {
+        width: 150px;
+        height: 150px;
+      }
+      .product-info {
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+      <img src="zylo1.png" alt="Logo">
+      <a href="main.html">🏠 Home</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="track.html">📦 Track</a>
+    </div>
+    <div class="nav-right">
+      <div id="storeName" style="font-weight: bold;"></div>
+      <span id="userDisplay"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  
+  <div class="b">
+    <div class="form-container">
+      <h2>🛍️ Checkout</h2>
+      <div id="productSection"></div>
+      
+      <div id="cartSummary" style="margin-top: 20px;">
+        <div class="summary-row grand-total">
+          <span class="summary-label">Total:</span>
+          <span class="summary-value">₹<span id="totalAmount">0</span></span>
+        </div>
+      </div>
+
+      <div id="deliverySection">
+        <h3 style="margin-top: 30px;">📍 Delivery Info</h3>
+        <div id="deliveryInfoSection">
+          <div id="addressDisplay"></div>
+          <input type="text" id="address" placeholder="Enter your delivery address" required />
+          <button id="changeAddressBtn" onclick="toggleAddressEdit()">Change Address</button>
+        </div>
+        <button id="placeOrderBtn" onclick="placeOrder()">Place Order</button>
+      </div>
+
+      <div class="success-message" id="successMessage">🎉 Order placed successfully! Thank you!</div>
+      <p id="orderStatus"></p>
+      <div class="back-to-home">
+        <a href="main.html">← Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize user session and UI elements
+    const user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const storeNameEl = document.getElementById('storeName');
+    const userDisplay = document.getElementById('userDisplay');
+    const productSection = document.getElementById('productSection');
+    const totalDisplay = document.getElementById('totalAmount');
+    const addressInput = document.getElementById('address');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const changeAddressBtn = document.getElementById('changeAddressBtn');
+    const addressDisplay = document.getElementById('addressDisplay');
+    const successMessage = document.getElementById('successMessage');
+    const orderStatus = document.getElementById('orderStatus');
+    
+    let savedAddress = localStorage.getItem('savedAddress') || '';
+    let isEditingAddress = false;
+    const buyNowItem = JSON.parse(sessionStorage.getItem('buyNow'));
+
+    // Check user authentication
+    if (user) {
+      const username = user.email.split('@')[0];
+      userDisplay.textContent = `👤 ${user.role === 'store' ? 'Store Owner' : 'Customer'}`;
+      storeNameEl.textContent = `👋 Welcome, ${username}`;
+    } else {
+      alert('Please log in first.');
+      window.location.href = 'login.html';
+    }
+
+    // Initialize address display
+    function initAddressDisplay() {
+      if (savedAddress) {
+        addressInput.value = savedAddress;
+        addressDisplay.textContent = savedAddress;
+        addressDisplay.style.display = 'block';
+        addressInput.style.display = 'none';
+        changeAddressBtn.style.display = 'inline-block';
+        changeAddressBtn.textContent = 'Change Address';
+      } else {
+        addressDisplay.style.display = 'none';
+        addressInput.style.display = 'block';
+        changeAddressBtn.style.display = 'none';
+      }
+    }
+
+    // Toggle address editing mode
+    function toggleAddressEdit() {
+      isEditingAddress = !isEditingAddress;
+      if (isEditingAddress) {
+        addressInput.value = savedAddress;
+        addressInput.style.display = 'block';
+        addressDisplay.style.display = 'none';
+        changeAddressBtn.textContent = 'Cancel';
+      } else {
+        addressInput.style.display = 'none';
+        addressDisplay.style.display = 'block';
+        changeAddressBtn.textContent = 'Change Address';
+      }
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully!');
+      window.location.href = 'login.html';
+    }
+
+    // Render product details
+    function renderProduct() {
+      if (!buyNowItem) {
+        productSection.innerHTML = '<p style="text-align: center;">No product selected for checkout.</p>';
+        placeOrderBtn.style.display = 'none';
+        document.getElementById('deliverySection').style.display = 'none';
+        document.getElementById('cartSummary').style.display = 'none';
+        return;
+      }
+
+      const discountedPrice = buyNowItem.discount && buyNowItem.discount > 0
+        ? (buyNowItem.price * (1 - buyNowItem.discount / 100)).toFixed(2)
+        : buyNowItem.price.toFixed(2);
+
+      const totalPrice = (discountedPrice * buyNowItem.quantity).toFixed(2);
+      totalDisplay.textContent = totalPrice;
+
+      productSection.innerHTML = `
+        <div class="product-details">
+          <img src="${buyNowItem.image}" alt="${buyNowItem.name}">
+          <div class="product-info">
+            <div class="product-name">${buyNowItem.name}</div>
+            <div class="product-price">
+              ${buyNowItem.discount ? `
+                <span class="original-price">₹${buyNowItem.price.toFixed(2)}</span>
+                <span class="discounted-price">₹${discountedPrice}</span>
+                <span class="discount-badge">${buyNowItem.discount}% OFF</span>
+              ` : `
+                <span class="discounted-price">₹${buyNowItem.price.toFixed(2)}</span>
+              `}
+            </div>
+            <div class="product-quantity">Quantity: ${buyNowItem.quantity}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Place order function
+    function placeOrder() {
+      const address = addressDisplay.style.display === 'block' 
+        ? addressDisplay.textContent 
+        : addressInput.value.trim();
+      
+      if (!address) {
+        orderStatus.textContent = 'Please enter a valid delivery address';
+        orderStatus.style.color = '#d32f2f';
+        return;
+      }
+      
+      if (!buyNowItem) return;
+
+      // Save the address if it's new
+      if (!savedAddress) {
+        localStorage.setItem('savedAddress', address);
+        savedAddress = address;
+        initAddressDisplay();
+      }
+
+      // Update product inventory
+      let products = JSON.parse(localStorage.getItem('products') || '[]');
+      const index = products.findIndex(p => p.id === buyNowItem.id);
+      if (index !== -1) {
+        products[index].quantity -= buyNowItem.quantity;
+        if (products[index].quantity < 0) products[index].quantity = 0;
+        localStorage.setItem('products', JSON.stringify(products));
+      }
+
+      // Create order record
+      const order = {
+        id: 'OD' + Date.now(),
+        productId: buyNowItem.id,
+        productName: buyNowItem.name,
+        quantity: buyNowItem.quantity,
+        price: buyNowItem.price,
+        discount: buyNowItem.discount || 0,
+        address: address,
+        date: new Date().toISOString(),
+        status: 'Processing',
+        total: parseFloat(totalDisplay.textContent)
+      };
+
+      let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      // Clear buy now item
+      sessionStorage.removeItem('buyNow');
+      
+      // Show success message
+      successMessage.style.display = 'block';
+      orderStatus.innerHTML = `
+        <div style="background: #e8f5e9; padding: 10px; border-radius: 4px; text-align: center;">
+          <p>Your Tracking ID: <strong>${order.id}</strong></p>
+          <a href="track.html?orderId=${order.id}" style="display: inline-block; margin-top: 10px; padding: 8px 15px; background: #d32f2f; color: white; border-radius: 4px; text-decoration: none;">Track Your Order</a>
+        </div>
+      `;
+      placeOrderBtn.disabled = true;
+      changeAddressBtn.style.display = 'none';
+    }
+
+    // Initialize the page
+    initAddressDisplay();
+    renderProduct();
+  </script>
+</body>
+</html>

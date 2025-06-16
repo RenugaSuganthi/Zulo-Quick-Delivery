@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart - One-Day Delivery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    .b {
+       background: linear-gradient(to bottom right, #fbe9e7, #fce4ec);
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #d32f2f;
+      padding: 10px 20px;
+      color: white;
+    }
+
+    .navbar a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-right button {
+      background: white;
+      color: #d32f2f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-right button:hover {
+      background: #f44336;
+      color: white;
+    }
+
+    .form-container {
+      background: white;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+
+    a {
+      color: #d32f2f;
+      text-decoration: none;
+    }
+
+    /* Cart item styles */
+    .cart-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+      position: relative;
+    }
+
+    .cart-item-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 15px;
+    }
+
+    .cart-item-details {
+      flex: 1;
+    }
+
+    .cart-item-name {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .cart-item-price {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+
+    .original-price {
+      text-decoration: line-through;
+      color: #999;
+    }
+
+    .discounted-price {
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .discount-badge {
+      background: #388e3c;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .owner-discount-badge {
+      background: #d32f2f;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .cart-item-quantity {
+      color: #666;
+    }
+
+    .cart-item-total {
+      margin-left: auto;
+      font-weight: bold;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+    }
+
+    .summary-label {
+      font-weight: bold;
+    }
+
+    .summary-value {
+      font-weight: bold;
+    }
+
+    .grand-total {
+      font-size: 1.2em;
+      color: #d32f2f;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    #addressDisplay {
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      word-break: break-word;
+    }
+
+    #changeAddressBtn {
+      width: auto;
+      margin-top: 5px;
+      display: none;
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    #changeAddressBtn:hover {
+      background: #e0e0e0;
+    }
+
+    .remove-item {
+      position: absolute;
+      top: 5px;
+      right: 0;
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 18px;
+      cursor: pointer;
+      width: auto;
+      padding: 0;
+    }
+
+    .remove-item:hover {
+      color: #d32f2f;
+    }
+
+    @media (max-width: 600px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-left, .nav-right {
+        margin-bottom: 10px;
+      }
+      .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .cart-item-image {
+        margin-bottom: 10px;
+      }
+      .cart-item-total {
+        margin-left: 0;
+        margin-top: 10px;
+        text-align: left;
+        width: 100%;
+      }
+      .remove-item {
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+      <img src="zylo1.png" alt="Logo">
+      <a href="main.html">🏠 Home</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="track.html">📦 Track</a>
+    </div>
+    <div class="nav-right">
+      <div id="storeName" style="font-weight: bold;"></div>
+      <span id="userDisplay"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  <div class="b">
+    <div class="form-container">
+      <h2>🛒 Your Cart</h2>
+      <div id="cartList"></div>
+      
+      <div id="cartSummary" style="margin-top: 20px;">
+        <div class="summary-row">
+          <span class="summary-label">Subtotal:</span>
+          <span class="summary-value">₹<span id="subtotalAmount">0</span></span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Discounts:</span>
+          <span class="summary-value">-₹<span id="discountAmount">0</span></span>
+        </div>
+        <div class="summary-row grand-total">
+          <span class="summary-label">Total:</span>
+          <span class="summary-value">₹<span id="totalAmount">0</span></span>
+        </div>
+      </div>
+
+      <div id="deliverySection">
+        <h3 style="margin-top: 30px;">📍 Delivery Info</h3>
+        <div id="deliveryInfoSection">
+          <div id="addressDisplay"></div>
+          <input type="text" id="address" placeholder="Enter your delivery address" required />
+          <button id="changeAddressBtn" onclick="toggleAddressEdit()">Change Address</button>
+        </div>
+        <button id="placeOrderBtn" onclick="placeOrder()">Place Order</button>
+      </div>
+
+      <p id="orderStatus" style="margin-top: 10px;"></p>
+      <a href="main.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    // Initialize user session and UI elements
+    let user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const storeNameEl = document.getElementById('storeName');
+    const userDisplay = document.getElementById('userDisplay');
+    let isEditingAddress = false;
+    let savedAddress = localStorage.getItem('savedAddress') || '';
+    
+    // DOM elements
+    let cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cartList = document.getElementById('cartList');
+    const subtotalDisplay = document.getElementById('subtotalAmount');
+    const discountDisplay = document.getElementById('discountAmount');
+    const totalDisplay = document.getElementById('totalAmount');
+    const addressInput = document.getElementById('address');
+    const placeOrderBtn = document.getElementById('placeOrderBtn');
+    const changeAddressBtn = document.getElementById('changeAddressBtn');
+    const addressDisplay = document.getElementById('addressDisplay');
+    const deliverySection = document.getElementById('deliverySection');
+    const deliveryInfoSection = document.getElementById('deliveryInfoSection');
+
+    // Check user authentication
+    if (user) {
+      const username = user.email.split('@')[0];
+      userDisplay.textContent = `👤 ${user.role === 'store' ? 'Store Owner' : 'Customer'}`;
+      storeNameEl.textContent = `👋 Welcome, ${username}`;
+    } else {
+      alert('Please log in first.');
+      window.location.href = 'login.html';
+    }
+
+    // Initialize address display
+    function initAddressDisplay() {
+      if (savedAddress) {
+        addressInput.value = savedAddress;
+        addressDisplay.textContent = savedAddress;
+        addressDisplay.style.display = 'block';
+        addressInput.style.display = 'none';
+        changeAddressBtn.style.display = 'inline-block';
+        changeAddressBtn.textContent = 'Change Address';
+      } else {
+        addressDisplay.style.display = 'none';
+        addressInput.style.display = 'block';
+        changeAddressBtn.style.display = 'none';
+      }
+    }
+
+    // Toggle address editing mode
+    function toggleAddressEdit() {
+      isEditingAddress = !isEditingAddress;
+      if (isEditingAddress) {
+        addressInput.value = savedAddress;
+        addressInput.style.display = 'block';
+        addressDisplay.style.display = 'none';
+        changeAddressBtn.textContent = 'Cancel';
+      } else {
+        addressInput.style.display = 'none';
+        addressDisplay.style.display = 'block';
+        changeAddressBtn.textContent = 'Change Address';
+      }
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully!');
+      window.location.href = 'login.html';
+    }
+
+    // Calculate final price with discounts
+    function calculateFinalPrice(item) {
+      const ownerDiscountedPrice = item.discount ? 
+            item.price * (1 - item.discount/100) : 
+            item.price;
+      
+      return {
+        finalPrice: ownerDiscountedPrice,
+        ownerDiscountAmount: item.discount ? 
+          (item.price - ownerDiscountedPrice) * item.quantity : 
+          0
+      };
+    }
+
+    // Remove item from cart
+    function removeItem(index) {
+      cartItems.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+      renderCartItems(); // Refresh the cart display
+    }
+
+    // Render cart items
+    function renderCartItems() {
+      cartList.innerHTML = ''; // Clear the cart list first
+      
+      if (cartItems.length === 0) {
+        cartList.innerHTML = '<p style="text-align: center;">Your cart is empty.</p>';
+        document.getElementById('cartSummary').style.display = 'none';
+        placeOrderBtn.style.display = 'none';
+        deliverySection.style.display = 'none';
+        return;
+      }
+
+      let subtotal = 0;
+      let totalDiscount = 0;
+      let total = 0;
+      
+      cartItems.forEach((item, index) => {
+        const { finalPrice, ownerDiscountAmount } = calculateFinalPrice(item);
+        
+        subtotal += item.price * item.quantity;
+        totalDiscount += ownerDiscountAmount;
+        total += finalPrice * item.quantity;
+
+        const cartItem = document.createElement('div');
+        cartItem.className = 'cart-item';
+        cartItem.innerHTML = `
+          <button class="remove-item" onclick="removeItem(${index})">×</button>
+          <img src="${item.image || 'https://via.placeholder.com/80'}" class="cart-item-image" alt="${item.name}">
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">
+              <span class="original-price">₹${item.price.toFixed(2)}</span>
+              ${item.discount ? `
+                <span class="discounted-price">₹${finalPrice.toFixed(2)}</span>
+                <span class="owner-discount-badge">${item.discount}% OFF</span>
+              ` : `
+                <span class="discounted-price">₹${item.price.toFixed(2)}</span>
+              `}
+            </div>
+            <div class="cart-item-quantity">Quantity: ${item.quantity}</div>
+          </div>
+          <div class="cart-item-total">
+            ₹${(finalPrice * item.quantity).toFixed(2)}
+          </div>
+        `;
+        cartList.appendChild(cartItem);
+      });
+
+      subtotalDisplay.innerText = subtotal.toFixed(2);
+      discountDisplay.innerText = totalDiscount.toFixed(2);
+      totalDisplay.innerText = total.toFixed(2);
+    }
+
+    // Place order function
+    function placeOrder() {
+      const address = addressInput.value.trim();
+      if (!address) {
+        alert('Please enter a valid delivery address.');
+        return;
+      }
+
+      // Save the address
+      localStorage.setItem('savedAddress', address);
+      savedAddress = address;
+      initAddressDisplay();
+
+      const orderId = 'OD' + Date.now();
+      const orderData = {
+        orderId,
+        items: cartItems,
+        address,
+        status: 'Order Placed',
+        date: new Date().toISOString(),
+        total: parseFloat(totalDisplay.innerText)
+      };
+
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(orderData);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.removeItem('cart');
+
+      showOrderSuccess(orderId);
+    }
+
+    // Show order success message
+    function showOrderSuccess(orderId) {
+      document.getElementById('orderStatus').innerHTML = `
+        <div style="background: #e8f5e9; padding: 10px; border-radius: 4px; text-align: center;">
+          <p>Your Tracking ID: <strong>${orderId}</strong></p>
+          <a href="track.html?orderId=${orderId}" style="display: inline-block; margin-top: 10px; padding: 8px 15px; background: #d32f2f; color: white; border-radius: 4px; text-decoration: none;">Track Your Order</a>
+        </div>
+      `;
+      
+      cartList.innerHTML = '<p style="text-align: center;">Your order has been placed successfully!</p>';
+      document.getElementById('cartSummary').style.display = 'none';
+      placeOrderBtn.style.display = 'none';
+      deliveryInfoSection.style.display = 'none';
+    }
+
+    // Initialize the page
+    initAddressDisplay();
+    renderCartItems();
+  </script>
+</body>
+</html>

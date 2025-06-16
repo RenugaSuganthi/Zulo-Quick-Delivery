@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sign Up - One-Day Delivery</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('dairyandstationery.png') no-repeat center center / cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .overlay {
+      background: rgba(0, 0, 0, 0.76);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .form-container {
+      width: 350px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    .overlay img.logo {
+      height: 150px;
+      margin-bottom: 5px;
+      margin-top: -170px;
+    }
+
+    h2 {
+      color: #d32f2f;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-container input {
+      padding-right: 40px;
+    }
+
+    .password-container .toggle-eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      width: 24px;
+      height: 20px;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .remember-me input {
+      width: auto;
+      margin-right: 8px;
+    }
+
+    a {
+      color: #d32f2f;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      margin-top: 10px;
+      font-weight: bold;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .error-message.show {
+      opacity: 1;
+    }
+
+    .success-message {
+      color: #2e7d32;
+      background-color: #e8f5e9;
+      padding: 15px;
+      border-radius: 4px;
+      margin: 15px 0;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay">
+    <img src="zylo2.png" class="logo" alt="Zylo Logo">
+    
+    <div class="form-container">
+      <h2>Sign Up</h2>
+      <div id="successMessage" class="success-message">
+        Account created successfully! Redirecting to login page...
+      </div>
+      <input type="text" id="signupName" placeholder="Full Name" required />
+      <input type="email" id="signupEmail" placeholder="Email" required />
+      <button onclick="createAccount()">Create Account</button>
+      <p>Already have an account? <a href="login.html">Login</a></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAqAuu8Hml8N4Jo76QO1t0nreAbGQzkV6k",
+      authDomain: "fitness-tracker-dashboard.firebaseapp.com",
+      projectId: "fitness-tracker-dashboard",
+      storageBucket: "fitness-tracker-dashboard.appspot.com",
+      messagingSenderId: "528880502919",
+      appId: "1:528880502919:web:7a8fc98b649b15ae0c5022"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function generateRandomPassword(length = 8) {
+      const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        password += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return password;
+    }
+
+    window.createAccount = async function() {
+      const name = document.getElementById("signupName").value.trim();
+      const email = document.getElementById("signupEmail").value.trim();
+      const successMessage = document.getElementById("successMessage");
+
+      if (!name || !email) {
+        alert("Please enter your full name and email.");
+        return;
+      }
+
+      // Generate random password
+      const password = generateRandomPassword();
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+          username: name,
+          email: email
+        });
+
+        // Hide form and show success message
+        document.querySelector(".form-container h2").style.display = "none";
+        document.querySelector(".form-container input").style.display = "none";
+        document.querySelector(".form-container button").style.display = "none";
+        document.querySelector(".form-container p").style.display = "none";
+        successMessage.style.display = "block";
+
+        // Simulate sending email (in real app, integrate with an email service)
+        console.log(`Password sent to ${email}: ${password}`);
+
+        // Redirect to login page after 3 seconds
+        setTimeout(() => {
+          window.location.href = "login.html";
+        }, 3000);
+
+      } catch (error) {
+        if (error.code === "auth/email-already-in-use") {
+          alert("This email is already registered. Please log in.");
+        } else {
+          alert(`Error: ${error.message}`);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

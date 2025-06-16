@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Track Your Order - One-Day Delivery</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    .b {
+      background: linear-gradient(to bottom right, #fbe9e7, #fce4ec);
+      background-repeat: no-repeat;
+      background-size: cover;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #d32f2f;
+      padding: 10px 20px;
+      color: white;
+    }
+
+    .navbar a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar img {
+      height: 40px;
+      margin-right: 15px;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-right button {
+      background: white;
+      color: #d32f2f;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .nav-right button:hover {
+      background: #f44336;
+      color: white;
+    }
+
+    .form-container {
+      background: white;
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #b71c1c;
+    }
+
+    a {
+      color: #d32f2f;
+      text-decoration: none;
+    }
+
+    /* Order tracking styles */
+    .tracking-container {
+      margin-top: 20px;
+    }
+
+    .order-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-id {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #d32f2f;
+    }
+
+    .order-date {
+      color: #666;
+    }
+
+    .order-status {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .status-placed {
+      background: #fff3e0;
+      color: #e65100;
+    }
+
+    .status-processing {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+
+    .status-shipped {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-delivered {
+      background: #f1f8e9;
+      color: #388e3c;
+    }
+
+    .status-cancelled {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    .order-details {
+      margin-top: 15px;
+    }
+
+    .order-address {
+      margin: 10px 0;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+
+    .order-items {
+      margin-top: 15px;
+    }
+
+    .order-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .order-item-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 15px;
+    }
+
+    .order-item-details {
+      flex: 1;
+    }
+
+    .order-item-name {
+      font-weight: bold;
+    }
+
+    .order-item-price {
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .order-item-quantity {
+      color: #666;
+    }
+
+    .order-summary {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+
+    .summary-label {
+      font-weight: bold;
+    }
+
+    .summary-value {
+      font-weight: bold;
+    }
+
+    .grand-total {
+      font-size: 1.1em;
+      color: #d32f2f;
+      margin-top: 5px;
+    }
+
+    .tracking-progress {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 8px;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .progress-steps::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #ddd;
+      z-index: 1;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      height: 4px;
+      background: #388e3c;
+      z-index: 2;
+      transition: width 0.3s ease;
+    }
+
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .step-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ddd;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .step-active {
+      background: #388e3c;
+    }
+
+    .step-completed {
+      background: #388e3c;
+    }
+
+    .step-label {
+      font-size: 12px;
+      color: #666;
+      text-align: center;
+    }
+
+    .step-active .step-label {
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .no-orders {
+      text-align: center;
+      padding: 30px;
+      color: #666;
+    }
+
+    .search-order {
+      margin-bottom: 20px;
+    }
+
+    .past-orders {
+      margin-top: 30px;
+    }
+
+    .recent-order {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .recent-order:hover {
+      background: #f5f5f5;
+    }
+
+    /* Buy Now specific styles */
+    .buy-now-notice {
+      border-left: 4px solid #1976d2;
+      background: #e3f2fd;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+
+    .buy-now-notice h4 {
+      color: #1976d2;
+      margin-top: 0;
+    }
+
+    .express-badge {
+      background: #1976d2;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    /* Simplified view styles */
+    .simplified-view .order-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .simplified-view .order-status {
+      margin-top: 5px;
+      align-self: flex-start;
+    }
+    
+    .simplified-view .order-item {
+      flex-wrap: wrap;
+    }
+    
+    .simplified-view .order-item-image {
+      margin-bottom: 10px;
+    }
+    
+    .simplified-view .tracking-progress,
+    .simplified-view .buy-now-notice {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .order-status {
+        margin-top: 5px;
+      }
+      
+      .progress-steps {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .progress-step {
+        width: 25%;
+        margin-bottom: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+      <img src="zylo1.png" alt="Logo">
+      <a href="main.html">🏠 Home</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="track.html">📦 Track</a>
+    </div>
+    <div class="nav-right">
+      <div id="storeName" style="font-weight: bold;"></div>
+      <span id="userDisplay"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
+  </nav>
+  <div class="b">
+    <div class="form-container">
+      <h2>📦 Track Your Order</h2>
+      
+      <div class="search-order">
+        <input type="text" id="orderIdInput" placeholder="Enter your Order ID (e.g., OD123456789)" />
+        <button onclick="searchOrder()">Track Order</button>
+        <div style="text-align: center; margin-top: 10px;">
+          <label>
+            <input type="checkbox" id="simplifiedView" onchange="toggleView()">
+            Simplified View
+          </label>
+        </div>
+      </div>
+      
+      <div id="trackingContainer" class="tracking-container">
+        <!-- Order details will be displayed here -->
+      </div>
+      
+      <div class="past-orders">
+        <h3>Your Past Orders</h3>
+        <div id="pastOrdersList"></div>
+      </div>
+      
+      <a href="main.html">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    // Initialize user session
+    let user = JSON.parse(localStorage.getItem('loggedInUser'));
+    const storeNameEl = document.getElementById('storeName');
+    const userDisplay = document.getElementById('userDisplay');
+    const trackingContainer = document.getElementById('trackingContainer');
+    const pastOrdersList = document.getElementById('pastOrdersList');
+    
+    // Check user authentication
+    if (user) {
+      const username = user.email.split('@')[0];
+      userDisplay.textContent = `👤 ${user.role === 'store' ? 'Store Owner' : 'Customer'}`;
+      storeNameEl.textContent = `👋 Welcome, ${username}`;
+      
+      // Check for orderId in URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const orderId = urlParams.get('orderId');
+      
+      if (orderId) {
+        document.getElementById('orderIdInput').value = orderId;
+        searchOrder();
+      } else {
+        loadPastOrders();
+      }
+    } else {
+      alert('Please log in first.');
+      window.location.href = 'login.html';
+    }
+    
+    // Logout function
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      alert('Logged out successfully!');
+      window.location.href = 'login.html';
+    }
+    
+    // Toggle between simplified and detailed view
+    function toggleView() {
+      const isSimplified = document.getElementById('simplifiedView').checked;
+      const orderCards = document.querySelectorAll('.order-card');
+      
+      orderCards.forEach(card => {
+        if (isSimplified) {
+          card.classList.add('simplified-view');
+        } else {
+          card.classList.remove('simplified-view');
+        }
+      });
+    }
+    
+    // Search for an order by ID
+    function searchOrder() {
+      const orderId = document.getElementById('orderIdInput').value.trim();
+      if (!orderId) {
+        alert('Please enter an Order ID');
+        return;
+      }
+      
+      // Search in both cart orders and buy now orders
+      const cartOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const buyNowOrders = JSON.parse(localStorage.getItem('cartOrders') || '[]');
+      const allOrders = [...cartOrders, ...buyNowOrders];
+      
+      // Flexible search that checks different possible formats
+      const order = allOrders.find(o => 
+        (o.orderId && (o.orderId === orderId || o.orderId === orderId.toUpperCase() || o.orderId === orderId.toLowerCase())) ||
+        (o.id && (o.id === orderId || o.id === orderId.toUpperCase() || o.id === orderId.toLowerCase()))
+      );
+      
+      if (order) {
+        // For security, verify it belongs to current user if email exists
+        if (order.email && order.email !== user.email) {
+          trackingContainer.innerHTML = `
+            <div class="no-orders">
+              <p>Order #${orderId} doesn't belong to your account.</p>
+            </div>
+          `;
+          return;
+        }
+        
+        // Ensure the order has the user's email (for backward compatibility)
+        if (!order.email) {
+          order.email = user.email;
+          // Update localStorage
+          const orderIndex = allOrders.findIndex(o => 
+            (o.orderId && o.orderId === order.orderId) || 
+            (o.id && o.id === order.id)
+          );
+          if (orderIndex !== -1) {
+            allOrders[orderIndex] = order;
+            if (order.orderId) {
+              localStorage.setItem('orders', JSON.stringify(cartOrders));
+            } else {
+              localStorage.setItem('cartOrders', JSON.stringify(buyNowOrders));
+            }
+          }
+        }
+        
+        displayOrderDetails(order);
+      } else {
+        trackingContainer.innerHTML = `
+          <div class="no-orders">
+            <p>No order found with ID: ${orderId}</p>
+            <p>Please check your Order ID and try again.</p>
+            ${generateRecentOrdersHtml([...cartOrders, ...buyNowOrders])}
+          </div>
+        `;
+      }
+    }
+    
+    // Generate HTML for recent orders
+    function generateRecentOrdersHtml(orders) {
+      const userOrders = orders
+        .filter(o => !o.email || o.email === user.email)
+        .sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || Date.now()))
+        .slice(0, 3); // Show only 3 most recent
+      
+      if (userOrders.length === 0) {
+        return '<p>No recent orders found</p>';
+      }
+      
+      return `
+        <p>Your recent orders:</p>
+        ${userOrders.map(order => `
+          <div class="recent-order" onclick="displayOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})">
+            <strong>${order.orderId || order.id}</strong> - ${new Date(order.date || Date.now()).toLocaleDateString()}
+            ${order.isBuyNow ? '<span class="express-badge">BUY NOW</span>' : ''}
+            <span style="float: right;">₹${calculateOrderTotal(order).toFixed(2)}</span>
+          </div>
+        `).join('')}
+      `;
+    }
+    
+    // Calculate order total
+    function calculateOrderTotal(order) {
+      if (order.total) return order.total;
+      
+      if (order.items && Array.isArray(order.items)) {
+        return order.items.reduce((total, item) => {
+          const discountedPrice = item.discount ? 
+                item.price * (1 - item.discount/100) : 
+                item.price;
+          return total + (discountedPrice * item.quantity);
+        }, 0);
+      }
+      
+      // For single product orders
+      const discountedPrice = order.discount ? 
+            order.price * (1 - order.discount/100) : 
+            order.price;
+      return discountedPrice * (order.quantity || 1);
+    }
+    
+    // Display order details
+    function displayOrderDetails(orderData) {
+      // If passed orderId instead of order object, find the order
+      if (typeof orderData === 'string') {
+        const cartOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+        const buyNowOrders = JSON.parse(localStorage.getItem('cartOrders') || '[]');
+        orderData = [...cartOrders, ...buyNowOrders].find(o => 
+          (o.orderId && o.orderId === orderData) || 
+          (o.id && o.id === orderData)
+        );
+        if (!orderData) return;
+      }
+      
+      // Normalize order data structure
+      const order = normalizeOrderData(orderData);
+      
+      const statusClass = getStatusClass(order.status);
+      const progress = calculateProgress(order.status);
+      
+      // Format order date
+      const orderDate = new Date(order.date || Date.now());
+      const formattedDate = orderDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      // Calculate order total
+      const orderTotal = calculateOrderTotal(order);
+      
+      // Create order items HTML
+      let itemsHtml = '';
+      order.items.forEach(item => {
+        const finalPrice = item.discount ? 
+              item.price * (1 - item.discount/100) : 
+              item.price;
+        
+        itemsHtml += `
+          <div class="order-item">
+            <img src="${item.image || 'https://via.placeholder.com/60'}" class="order-item-image" alt="${item.name}">
+            <div class="order-item-details">
+              <div class="order-item-name">${item.name}</div>
+              <div>
+                <span class="order-item-price">₹${finalPrice.toFixed(2)}</span>
+                <span class="order-item-quantity"> × ${item.quantity}</span>
+                ${item.discount ? `<span style="color:#d32f2f; font-size:12px; margin-left:5px;">${item.discount}% OFF</span>` : ''}
+              </div>
+            </div>
+            <div style="font-weight:bold;">₹${(finalPrice * item.quantity).toFixed(2)}</div>
+          </div>
+        `;
+      });
+      
+      // Create tracking progress HTML
+      const trackingHtml = `
+        <div class="tracking-progress">
+          <h3>Order Status: <span class="order-status ${statusClass}">${order.status}</span></h3>
+          <div class="progress-steps">
+            <div class="progress-bar" style="width: ${progress.percentage}%"></div>
+            <div class="progress-step ${progress.steps[0].class}">
+              <div class="step-icon ${progress.steps[0].iconClass}">${progress.steps[0].icon}</div>
+              <div class="step-label">Placed</div>
+            </div>
+            <div class="progress-step ${progress.steps[1].class}">
+              <div class="step-icon ${progress.steps[1].iconClass}">${progress.steps[1].icon}</div>
+              <div class="step-label">Processing</div>
+            </div>
+            <div class="progress-step ${progress.steps[2].class}">
+              <div class="step-icon ${progress.steps[2].iconClass}">${progress.steps[2].icon}</div>
+              <div class="step-label">Shipped</div>
+            </div>
+            <div class="progress-step ${progress.steps[3].class}">
+              <div class="step-icon ${progress.steps[3].iconClass}">${progress.steps[3].icon}</div>
+              <div class="step-label">Delivered</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Combine all HTML
+      trackingContainer.innerHTML = `
+        <div class="order-card" id="currentOrderCard">
+          <div class="order-header">
+            <div>
+              <span class="order-id">Order #${order.orderId || order.id}</span>
+              ${order.isBuyNow ? '<span class="express-badge">BUY NOW</span>' : ''}
+              <span class="order-date">Placed on ${formattedDate}</span>
+            </div>
+            <span class="order-status ${statusClass}">${order.status}</span>
+          </div>
+          
+          ${trackingHtml}
+          
+          ${order.isBuyNow ? `
+            <div class="buy-now-notice">
+              <h4>Buy Now Order</h4>
+              <p>This order was placed using our express Buy Now option and is being processed with priority.</p>
+            </div>
+          ` : ''}
+          
+          <div class="order-details">
+            <h4>Delivery Address</h4>
+            <div class="order-address">${order.address || 'Not specified'}</div>
+            
+            <h4>Order Items</h4>
+            <div class="order-items">
+              ${itemsHtml}
+            </div>
+            
+            <div class="order-summary">
+              <div class="summary-row">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">₹${orderTotal.toFixed(2)}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">Delivery Fee:</span>
+                <span class="summary-value">₹0.00</span>
+              </div>
+              <div class="summary-row grand-total">
+                <span class="summary-label">Total:</span>
+                <span class="summary-value">₹${orderTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // Apply simplified view if checkbox is checked
+      if (document.getElementById('simplifiedView').checked) {
+        document.getElementById('currentOrderCard').classList.add('simplified-view');
+      }
+      
+      // Also load past orders
+      loadPastOrders();
+    }
+    
+    // Normalize order data from different sources
+    function normalizeOrderData(order) {
+      // If it's a cart order with items array, return as is
+      if (order.items && Array.isArray(order.items)) {
+        return {
+          orderId: order.orderId || order.id,
+          items: order.items,
+          address: order.address,
+          status: order.status || 'Order Placed',
+          date: order.date || new Date().toISOString(),
+          email: order.email,
+          isBuyNow: order.isBuyNow || false
+        };
+      }
+      
+      // If it's a single product order, create items array
+      return {
+        orderId: order.orderId || order.id,
+        items: [{
+          name: order.productName || 'Product',
+          price: order.price || 0,
+          quantity: order.quantity || 1,
+          discount: order.discount || 0,
+          image: order.image || 'https://via.placeholder.com/60'
+        }],
+        address: order.address,
+        status: order.status || 'Order Placed',
+        date: order.date || new Date().toISOString(),
+        email: order.email,
+        isBuyNow: true // Assume single orders are Buy Now
+      };
+    }
+    
+    // Calculate progress bar status based on order status
+    function calculateProgress(status) {
+      const steps = [
+        { class: '', iconClass: '', icon: '1' },
+        { class: '', iconClass: '', icon: '2' },
+        { class: '', iconClass: '', icon: '3' },
+        { class: '', iconClass: '', icon: '4' }
+      ];
+      
+      let percentage = 0;
+      
+      if (!status) status = 'Order Placed';
+      
+      switch(status.toLowerCase()) {
+        case 'order placed':
+          steps[0].class = 'step-active';
+          steps[0].iconClass = 'step-active';
+          percentage = 10;
+          break;
+        case 'processing':
+          steps[0].class = 'step-completed';
+          steps[0].iconClass = 'step-completed';
+          steps[0].icon = '✓';
+          steps[1].class = 'step-active';
+          steps[1].iconClass = 'step-active';
+          percentage = 40;
+          break;
+        case 'shipped':
+          steps[0].class = 'step-completed';
+          steps[0].iconClass = 'step-completed';
+          steps[0].icon = '✓';
+          steps[1].class = 'step-completed';
+          steps[1].iconClass = 'step-completed';
+          steps[1].icon = '✓';
+          steps[2].class = 'step-active';
+          steps[2].iconClass = 'step-active';
+          percentage = 70;
+          break;
+        case 'delivered':
+          steps[0].class = 'step-completed';
+          steps[0].iconClass = 'step-completed';
+          steps[0].icon = '✓';
+          steps[1].class = 'step-completed';
+          steps[1].iconClass = 'step-completed';
+          steps[1].icon = '✓';
+          steps[2].class = 'step-completed';
+          steps[2].iconClass = 'step-completed';
+          steps[2].icon = '✓';
+          steps[3].class = 'step-completed';
+          steps[3].iconClass = 'step-completed';
+          steps[3].icon = '✓';
+          percentage = 100;
+          break;
+        case 'cancelled':
+          // For cancelled orders, don't show progress
+          percentage = 0;
+          break;
+        default:
+          percentage = 10;
+      }
+      
+      return { percentage, steps };
+    }
+    
+    // Get CSS class for order status
+    function getStatusClass(status) {
+      if (!status) return 'status-placed';
+      
+      switch(status.toLowerCase()) {
+        case 'order placed': return 'status-placed';
+        case 'processing': return 'status-processing';
+        case 'shipped': return 'status-shipped';
+        case 'delivered': return 'status-delivered';
+        case 'cancelled': return 'status-cancelled';
+        default: return 'status-placed';
+      }
+    }
+    
+    // Load user's past orders
+    function loadPastOrders() {
+      const cartOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const buyNowOrders = JSON.parse(localStorage.getItem('cartOrders') || '[]');
+      const allOrders = [...cartOrders, ...buyNowOrders];
+      
+      const userOrders = allOrders
+        .filter(o => !o.email || o.email === user.email)
+        .sort((a, b) => new Date(b.date || Date.now()) - new Date(a.date || Date.now()));
+      
+      if (userOrders.length === 0) {
+        pastOrdersList.innerHTML = `
+          <div class="no-orders">
+            <p>You haven't placed any orders yet.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      let pastOrdersHtml = '';
+      userOrders.forEach(order => {
+        const normalizedOrder = normalizeOrderData(order);
+        const statusClass = getStatusClass(normalizedOrder.status);
+        const orderDate = new Date(normalizedOrder.date || Date.now());
+        const formattedDate = orderDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        
+        const itemCount = normalizedOrder.items.reduce((total, item) => total + item.quantity, 0);
+        const orderTotal = calculateOrderTotal(normalizedOrder);
+        
+        pastOrdersHtml += `
+          <div class="order-card" onclick="displayOrderDetails(${JSON.stringify(order).replace(/"/g, '&quot;')})" style="cursor:pointer;">
+            <div class="order-header">
+              <div>
+                <span class="order-id">Order #${normalizedOrder.orderId || normalizedOrder.id}</span>
+                ${normalizedOrder.isBuyNow ? '<span class="express-badge">BUY NOW</span>' : ''}
+                <span class="order-date">${formattedDate}</span>
+              </div>
+              <span class="order-status ${statusClass}">${normalizedOrder.status}</span>
+            </div>
+            <div class="order-details">
+              <div style="margin:10px 0;">
+                <span>${itemCount} item${itemCount > 1 ? 's' : ''}</span>
+                <span style="float:right; font-weight:bold;">₹${orderTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      pastOrdersList.innerHTML = pastOrdersHtml;
+    }
+  </script>
+</body>
+</html>
